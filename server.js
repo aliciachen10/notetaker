@@ -4,6 +4,7 @@ const fs = require('fs');
 const util = require('util');
 // const db = require('/db/db.json');
 const db = require('./db/db.json');
+const uuid = require('./helpers/uuid');
 
 // Helper method for generating unique ids
 // const uuid = require('./helpers/uuid');
@@ -139,7 +140,7 @@ app.post('/api/notes', (req, res) => {
 
   if (req.body) {
     const newNote = {
-      id: db[db.length - 1].id + 1 || 1,//BOOMARK ARRAY[ARRAY.LENGTH()].ID + 1 
+      id: uuid(),//BOOMARK ARRAY[ARRAY.LENGTH()].ID + 1 
       title,
       text
     };
