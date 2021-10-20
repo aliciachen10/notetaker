@@ -9,7 +9,7 @@ const uuid = require('./helpers/uuid');
 // Helper method for generating unique ids
 // const uuid = require('./helpers/uuid');
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 const app = express();
 
 // Middleware for parsing JSON and urlencoded form data
@@ -38,7 +38,7 @@ const readFromFile = util.promisify(fs.readFile);
  */
 const writeToFile = (destination, content) =>
   fs.writeFile(destination, JSON.stringify(content, null, 4), (err) =>
-    err ? console.error(err) : console.info(`\nData written to ${destination}`)
+    err ? console.error(err, "it broke") : console.info(`\nData written to ${destination}`)
   );
 
 /**
@@ -67,7 +67,7 @@ app.post('/api/notes', (req, res) => {
 
   if (req.body) {
     const newNote = {
-      id: uuid(),//BOOMARK ARRAY[ARRAY.LENGTH()].ID + 1 
+      id: uuid(),
       title,
       text
     };
@@ -85,26 +85,20 @@ app.get('/api/notes', (req, res) => {
   readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
 });
 
-// GET Route for retrieving a note by id
-app.get('/api/notes/:id', (req, res) => {
-  console.info(`${req.method} request received for tips`);
-  res.json(notes[id])
-});
-
 //delete route for deleting a note by id
 //go into the db.json and get rid of the note so that the new list of notes can render to the frontend
 app.delete('/api/notes/:id', (req, res) => {
-  console.log(req.params)
 
+  const db = JSON.parse(fs.readFileSync('./db/db.json', 'utf-8'))
+  console.log(db)
   db.find((element, index) => {
-    console.log(element)
-    if (element.id == req.params.id) {
+    console.log("new console log", req.params.id, element.id)
+    if (element.id === req.params.id) {
       console.log("it worked!!!!")
       db.splice(index, 1)
       writeToFile('./db/db.json', db)
       
     }
-
   })
   res.json(true)
 });
